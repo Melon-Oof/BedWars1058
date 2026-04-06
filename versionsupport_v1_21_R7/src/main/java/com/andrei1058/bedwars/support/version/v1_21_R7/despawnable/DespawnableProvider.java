@@ -3,7 +3,9 @@ package com.andrei1058.bedwars.support.version.v1_21_R7.despawnable;
 import com.andrei1058.bedwars.api.arena.team.ITeam;
 import com.andrei1058.bedwars.api.server.VersionSupport;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityCreature;
 import net.minecraft.world.entity.EntityInsentient;
+import net.minecraft.world.entity.EntityLiving;
 import net.minecraft.world.entity.ai.goal.PathfinderGoal;
 import net.minecraft.world.entity.ai.goal.PathfinderGoalSelector;
 import net.minecraft.world.entity.ai.goal.target.PathfinderGoalNearestAttackableTarget;
@@ -29,22 +31,22 @@ public abstract class DespawnableProvider<T> {
         return null == despawnable || despawnable.getTeam() != team;
     }
 
-    protected PathfinderGoalSelector getTargetSelector(@NotNull EntityInsentient entity) {
+    protected PathfinderGoalSelector getTargetSelector(@NotNull EntityCreature entity) {
         return entity.targetSelector;
     }
 
-    protected PathfinderGoalSelector getGoalSelector(@NotNull EntityInsentient entity) {
+    protected PathfinderGoalSelector getGoalSelector(@NotNull EntityCreature entity) {
         return entity.goalSelector;
     }
 
-    protected void clearSelectors(@NotNull EntityInsentient entity) {
+    protected void clearSelectors(@NotNull EntityCreature entity) {
         entity.goalSelector.removeAllGoals(g -> true);
         entity.targetSelector.removeAllGoals(g -> true);
     }
 
     protected PathfinderGoal getTargetGoal(EntityInsentient entity, ITeam team, VersionSupport api) {
-        return new PathfinderGoalNearestAttackableTarget<EntityHuman>(entity, EntityHuman.class, 20, true, false,
-                livingEntity -> {
+        return new PathfinderGoalNearestAttackableTarget<>(entity, EntityHuman.class, 20, true, false,
+                (EntityLiving livingEntity) -> {
                     if (livingEntity instanceof EntityHuman nmsPlayer) {
                         return !nmsPlayer.getBukkitEntity().isDead()
                                 && !team.wasMember(nmsPlayer.getBukkitEntity().getUniqueId())
