@@ -17,21 +17,17 @@
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
         <repository>
-            <id>commons-repo</id>
-            <url>https://repo.fusesource.com/nexus/content/repositories/releases-3rd-party/</url>
-        </repository>
-        <repository>
-            <id>andrei-prod</id>
-            <url>https://repo.andrei1058.dev/releases</url>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
         </repository>
     </repositories>
 
     <dependencies>
-        <!-- https://mvnrepository.com/artifact/com.google.common/google-collect -->
+        <!-- google-collect successor; Spigot bundles Guava at runtime -->
         <dependency>
-            <groupId>com.google.common</groupId>
-            <artifactId>google-collect</artifactId>
-            <version>1.0</version>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>17.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -48,7 +44,7 @@
         </dependency>
         <!-- SIDEBAR LIB -->
         <dependency>
-            <groupId>com.andrei1058.spigot.sidebar</groupId>
+            <groupId>com.github.andrei1058.SidebarLib</groupId>
             <artifactId>sidebar-base</artifactId>
             <version>23.2</version>
         </dependency>
