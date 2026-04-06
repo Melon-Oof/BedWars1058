@@ -8,6 +8,7 @@ As from November 1st 2021 BedWars1058 by Andrei Dascălu becomes open source und
 [![Crowdin](https://support.crowdin.com/assets/badges/localization-at-white-rounded-bordered@1x.svg)](https://crowdin.com/project/bedwars1058)
 
 # Description
+Fork of Andrei1058's Bedwars1058. Very unstable as fully vibecoded, no actual code review. Use at your own risk.
 BedWars is a mini-game where you have to defend your bed and destroy the others.  
 Once your bed is destroyed, you cannot respawn.
 
