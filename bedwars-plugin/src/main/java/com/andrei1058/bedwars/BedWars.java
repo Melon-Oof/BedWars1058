@@ -780,7 +780,7 @@ public class BedWars extends JavaPlugin {
         } else if (minor == 19) {
             if (patch >= 3) return "v1_19_R3";
             if (patch >= 1) return "v1_19_R2";
-            return "v1_19_R3";
+            return "v1_19_R1";
         } else if (minor == 18) {
             return "v1_18_R2";
         } else if (minor == 17) {
