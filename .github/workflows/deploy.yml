@@ -14,12 +14,5 @@ jobs:
         with:
           java-version: '21'
           distribution: 'temurin'
-      - name: Build SidebarLib from source
-        run: |
-          git clone --depth=1 --branch=25.9 https://github.com/andrei1058/SidebarLib.git /tmp/SidebarLib
-          cd /tmp/SidebarLib
-          mvn versions:set -DnewVersion=25.9 -q
-          mvn versions:update-child-modules -q
-          mvn clean install -DskipTests -q
       - name: Build with Maven
         run: mvn clean install -DskipTests
