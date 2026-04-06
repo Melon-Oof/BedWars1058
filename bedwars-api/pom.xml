@@ -46,7 +46,7 @@
         <dependency>
             <groupId>com.github.andrei1058.SidebarLib</groupId>
             <artifactId>sidebar-base</artifactId>
-            <version>24.2</version>
+            <version>25.9</version>
         </dependency>
     </dependencies>
     <build>
