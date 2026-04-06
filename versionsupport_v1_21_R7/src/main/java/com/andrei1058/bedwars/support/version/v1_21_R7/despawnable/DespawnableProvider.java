@@ -3,15 +3,15 @@ package com.andrei1058.bedwars.support.version.v1_21_R7.despawnable;
 import com.andrei1058.bedwars.api.arena.team.ITeam;
 import com.andrei1058.bedwars.api.server.VersionSupport;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.PathfinderMob;
-import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.goal.Goal;
-import net.minecraft.world.entity.ai.goal.GoalSelector;
-import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.EntityCreature;
+import net.minecraft.world.entity.EntityInsentient;
+import net.minecraft.world.entity.ai.goal.PathfinderGoal;
+import net.minecraft.world.entity.ai.goal.PathfinderGoalSelector;
+import net.minecraft.world.entity.ai.goal.target.PathfinderGoalNearestAttackableTarget;
+import net.minecraft.world.entity.player.EntityHuman;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.entity.CraftEntity;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.craftbukkit.v1_21_R7.entity.CraftEntity;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -30,23 +30,23 @@ public abstract class DespawnableProvider<T> {
         return null == despawnable || despawnable.getTeam() != team;
     }
 
-    protected GoalSelector getTargetSelector(@NotNull PathfinderMob entity) {
+    protected PathfinderGoalSelector getTargetSelector(@NotNull EntityCreature entity) {
         return entity.targetSelector;
     }
 
-    protected GoalSelector getGoalSelector(@NotNull PathfinderMob entity) {
+    protected PathfinderGoalSelector getGoalSelector(@NotNull EntityCreature entity) {
         return entity.goalSelector;
     }
 
-    protected void clearSelectors(@NotNull PathfinderMob entity) {
+    protected void clearSelectors(@NotNull EntityCreature entity) {
         entity.goalSelector.removeAllGoals(g -> true);
         entity.targetSelector.removeAllGoals(g -> true);
     }
 
-    protected Goal getTargetGoal(Mob entity, ITeam team, VersionSupport api) {
-        return new NearestAttackableTargetGoal<>(entity, Player.class, 20, true, false,
+    protected PathfinderGoal getTargetGoal(EntityInsentient entity, ITeam team, VersionSupport api) {
+        return new PathfinderGoalNearestAttackableTarget<>(entity, EntityHuman.class, 20, true, false,
                 livingEntity -> {
-                    if (livingEntity instanceof Player nmsPlayer) {
+                    if (livingEntity instanceof EntityHuman nmsPlayer) {
                         return !nmsPlayer.getBukkitEntity().isDead()
                                 && !team.wasMember(nmsPlayer.getBukkitEntity().getUniqueId())
                                 && !team.getArena().isReSpawning(nmsPlayer.getBukkitEntity().getUniqueId())
@@ -63,9 +63,8 @@ public abstract class DespawnableProvider<T> {
         bukkitEntity.setCustomNameVisible(true);
         bukkitEntity.setCustomName(getDisplayName(attr, team));
 
-        var entity = (Mob) ((CraftEntity) bukkitEntity).getHandle();
-        Objects.requireNonNull(entity.getAttribute(Attributes.MAX_HEALTH)).setBaseValue(attr.health());
-        Objects.requireNonNull(entity.getAttribute(Attributes.MOVEMENT_SPEED)).setBaseValue(attr.speed());
-        Objects.requireNonNull(entity.getAttribute(Attributes.ATTACK_DAMAGE)).setBaseValue(attr.damage());
+        Objects.requireNonNull(bukkitEntity.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(attr.health());
+        Objects.requireNonNull(bukkitEntity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED)).setBaseValue(attr.speed());
+        Objects.requireNonNull(bukkitEntity.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE)).setBaseValue(attr.damage());
     }
 }
