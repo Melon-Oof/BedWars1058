@@ -28,7 +28,7 @@ import net.minecraft.server.network.PlayerConnection;
 import net.minecraft.world.entity.EnumItemSlot;
 import net.minecraft.world.entity.EntityLiving;
 import net.minecraft.world.entity.item.EntityTNTPrimed;
-import net.minecraft.world.entity.projectile.EntityFireball;
+import net.minecraft.world.entity.projectile.Fireball;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.block.Blocks;
@@ -652,7 +652,7 @@ public class v1_21_R7 extends VersionSupport {
 
     @Override
     public org.bukkit.entity.Fireball setFireballDirection(org.bukkit.entity.Fireball fireball, @NotNull Vector vector) {
-        EntityFireball fb = ((CraftFireball) fireball).getHandle();
+        Fireball fb = ((CraftFireball) fireball).getHandle();
         try {
             Field xField = fb.getClass().getSuperclass().getDeclaredField("xPower");
             Field yField = fb.getClass().getSuperclass().getDeclaredField("yPower");
