@@ -17,8 +17,8 @@
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
         <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
+            <id>andrei1058-releases</id>
+            <url>https://repo.andrei1058.dev/releases/</url>
         </repository>
     </repositories>
 
@@ -44,7 +44,7 @@
         </dependency>
         <!-- SIDEBAR LIB -->
         <dependency>
-            <groupId>com.github.andrei1058.SidebarLib</groupId>
+            <groupId>com.andrei1058.spigot.sidebar</groupId>
             <artifactId>sidebar-base</artifactId>
             <version>25.9</version>
         </dependency>
