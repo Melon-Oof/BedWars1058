@@ -122,7 +122,7 @@ public class BedWars extends JavaPlugin {
     private static Chat chat = new NoChat();
     protected static Level level;
     private static Economy economy;
-    private static final String version = Bukkit.getServer().getClass().getName().split("\\.")[3];
+    private static final String version = detectServerVersion();
     private static String lobbyWorld = "";
     private static boolean shuttingDown = false;
 
@@ -149,8 +149,14 @@ public class BedWars extends JavaPlugin {
         }
 
         try {
-            Class.forName("com.destroystokyo.paper.PaperConfig");
-            isPaper = true;
+            // com.destroystokyo.paper.PaperConfig was removed in Paper 1.20.5+; use the new config class as fallback
+            try {
+                Class.forName("com.destroystokyo.paper.PaperConfig");
+                isPaper = true;
+            } catch (ClassNotFoundException ignored) {
+                Class.forName("io.papermc.paper.configuration.GlobalConfiguration");
+                isPaper = true;
+            }
         } catch (ClassNotFoundException e) {
             isPaper = false;
         }
@@ -727,6 +733,66 @@ public class BedWars extends JavaPlugin {
      */
     public static String getServerVersion() {
         return version;
+    }
+
+    /**
+     * Detects the NMS version string (e.g. {@code v1_21_R7}).
+     * <p>
+     * On Spigot/older Paper, {@code CraftServer} lives in
+     * {@code org.bukkit.craftbukkit.<version>.CraftServer}, so the version
+     * is at index 3 of the class name split by ".".
+     * On Paper 1.20.5+ the version segment was removed from CraftBukkit
+     * packages, so we fall back to parsing the Bukkit API version string.
+     */
+    private static String detectServerVersion() {
+        String[] parts = Bukkit.getServer().getClass().getName().split("\\.");
+        // Spigot / older Paper: org.bukkit.craftbukkit.v1_20_R3.CraftServer
+        if (parts.length > 3 && parts[3].startsWith("v")) {
+            return parts[3];
+        }
+        // Paper 1.20.5+ : org.bukkit.craftbukkit.CraftServer – derive from API version
+        return mapBukkitVersionToNms(Bukkit.getBukkitVersion());
+    }
+
+    /**
+     * Maps a Bukkit version string such as {@code "1.21.11-R0.1-SNAPSHOT"} to
+     * the corresponding NMS package revision string, e.g. {@code "v1_21_R7"}.
+     */
+    static String mapBukkitVersionToNms(String bukkitVersion) {
+        String mcVersion = bukkitVersion.split("-")[0]; // e.g. "1.21.11"
+        String[] mc = mcVersion.split("\\.");
+        int minor = mc.length > 1 ? Integer.parseInt(mc[1]) : 0;
+        int patch  = mc.length > 2 ? Integer.parseInt(mc[2]) : 0;
+
+        if (minor == 21) {
+            if (patch >= 11) return "v1_21_R7";
+            if (patch >= 9)  return "v1_21_R6";
+            if (patch >= 7)  return "v1_21_R5";
+            if (patch >= 5)  return "v1_21_R4";
+            if (patch >= 3)  return "v1_21_R3";
+            if (patch >= 2)  return "v1_21_R2";
+            return "v1_21_R1";
+        } else if (minor == 20) {
+            if (patch >= 5) return "v1_20_R4";
+            if (patch >= 3) return "v1_20_R3";
+            if (patch == 2) return "v1_20_R2";
+            return "v1_20_R1";
+        } else if (minor == 19) {
+            if (patch >= 3) return "v1_19_R3";
+            if (patch >= 1) return "v1_19_R2";
+            return "v1_19_R1";
+        } else if (minor == 18) {
+            return "v1_18_R2";
+        } else if (minor == 17) {
+            return "v1_17_R1";
+        } else if (minor == 16) {
+            return "v1_16_R3";
+        } else if (minor == 12) {
+            return "v1_12_R1";
+        } else if (minor == 8) {
+            return "v1_8_R3";
+        }
+        return "v1_" + minor + "_R1";
     }
 
     public static String getLobbyWorld() {
