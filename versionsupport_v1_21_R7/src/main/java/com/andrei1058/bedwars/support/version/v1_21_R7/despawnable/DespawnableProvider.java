@@ -99,7 +99,7 @@ public abstract class DespawnableProvider<T> {
     }
 
     protected PathfinderGoal getTargetGoal(EntityInsentient entity, ITeam team, VersionSupport api) {
-        return new PathfinderGoalNearestAttackableTarget<>(entity, EntityLiving.class, 20, true, false,
+        return new PathfinderGoalNearestAttackableTarget<EntityLiving>(entity, EntityLiving.class, 20, true, false,
                 entityLiving -> {
                     if (entityLiving instanceof EntityHuman) {
                         return !((EntityHuman) entityLiving).getBukkitEntity().isDead()
