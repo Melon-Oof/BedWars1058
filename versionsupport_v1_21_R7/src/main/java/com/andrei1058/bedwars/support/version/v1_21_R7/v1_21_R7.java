@@ -20,7 +20,7 @@ import net.minecraft.core.particles.ParticleParamRedstone;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.*;
 import net.minecraft.server.level.EntityPlayer;
-import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.EnumItemSlot;
 import net.minecraft.world.entity.EntityLiving;
 import net.minecraft.world.entity.item.EntityTNTPrimed;
 import net.minecraft.world.item.*;
@@ -298,23 +298,23 @@ public class v1_21_R7 extends VersionSupport {
 
     @Override
     public void hideArmor(@NotNull Player victim, Player receiver) {
-        List<Pair<EquipmentSlot, net.minecraft.world.item.ItemStack>> items = new ArrayList<>();
+        List<Pair<EnumItemSlot, net.minecraft.world.item.ItemStack>> items = new ArrayList<>();
         net.minecraft.world.item.ItemStack empty = new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.AIR);
-        items.add(new Pair<>(EquipmentSlot.HEAD,  empty));
-        items.add(new Pair<>(EquipmentSlot.CHEST, empty));
-        items.add(new Pair<>(EquipmentSlot.LEGS,  empty));
-        items.add(new Pair<>(EquipmentSlot.FEET,  empty));
+        items.add(new Pair<>(EnumItemSlot.HEAD,  empty));
+        items.add(new Pair<>(EnumItemSlot.CHEST, empty));
+        items.add(new Pair<>(EnumItemSlot.LEGS,  empty));
+        items.add(new Pair<>(EnumItemSlot.FEET,  empty));
         PacketPlayOutEntityEquipment packet = new PacketPlayOutEntityEquipment(victim.getEntityId(), items);
         sendPacket(receiver, packet);
     }
 
     @Override
     public void showArmor(@NotNull Player victim, Player receiver) {
-        List<Pair<EquipmentSlot, net.minecraft.world.item.ItemStack>> items = new ArrayList<>();
-        items.add(new Pair<>(EquipmentSlot.HEAD,  CraftItemStack.asNMSCopy(victim.getInventory().getHelmet())));
-        items.add(new Pair<>(EquipmentSlot.CHEST, CraftItemStack.asNMSCopy(victim.getInventory().getChestplate())));
-        items.add(new Pair<>(EquipmentSlot.LEGS,  CraftItemStack.asNMSCopy(victim.getInventory().getLeggings())));
-        items.add(new Pair<>(EquipmentSlot.FEET,  CraftItemStack.asNMSCopy(victim.getInventory().getBoots())));
+        List<Pair<EnumItemSlot, net.minecraft.world.item.ItemStack>> items = new ArrayList<>();
+        items.add(new Pair<>(EnumItemSlot.HEAD,  CraftItemStack.asNMSCopy(victim.getInventory().getHelmet())));
+        items.add(new Pair<>(EnumItemSlot.CHEST, CraftItemStack.asNMSCopy(victim.getInventory().getChestplate())));
+        items.add(new Pair<>(EnumItemSlot.LEGS,  CraftItemStack.asNMSCopy(victim.getInventory().getLeggings())));
+        items.add(new Pair<>(EnumItemSlot.FEET,  CraftItemStack.asNMSCopy(victim.getInventory().getBoots())));
         PacketPlayOutEntityEquipment packet = new PacketPlayOutEntityEquipment(victim.getEntityId(), items);
         sendPacket(receiver, packet);
     }
@@ -606,7 +606,7 @@ public class v1_21_R7 extends VersionSupport {
         PacketPlayOutEntityHeadRotation head =
                 new PacketPlayOutEntityHeadRotation(entityPlayer, getCompressedAngle(entityPlayer.getBukkitYaw()));
 
-        List<Pair<EquipmentSlot, net.minecraft.world.item.ItemStack>> list = getPlayerEquipment(entityPlayer);
+        List<Pair<EnumItemSlot, net.minecraft.world.item.ItemStack>> list = getPlayerEquipment(entityPlayer);
 
         for (Player p : arena.getPlayers()) {
             if (p == null || p.equals(respawned)) continue;
@@ -775,19 +775,19 @@ public class v1_21_R7 extends VersionSupport {
         return ((CraftPlayer) player).getHandle();
     }
 
-    public List<Pair<EquipmentSlot, net.minecraft.world.item.ItemStack>> getPlayerEquipment(@NotNull Player player) {
+    public List<Pair<EnumItemSlot, net.minecraft.world.item.ItemStack>> getPlayerEquipment(@NotNull Player player) {
         return getPlayerEquipment(getPlayer(player));
     }
 
-    public List<Pair<EquipmentSlot, net.minecraft.world.item.ItemStack>> getPlayerEquipment(
+    public List<Pair<EnumItemSlot, net.minecraft.world.item.ItemStack>> getPlayerEquipment(
             @NotNull EntityPlayer entityPlayer) {
-        List<Pair<EquipmentSlot, net.minecraft.world.item.ItemStack>> list = new ArrayList<>();
-        list.add(new Pair<>(EquipmentSlot.MAIN_HAND, entityPlayer.getItemBySlot(EquipmentSlot.MAIN_HAND)));
-        list.add(new Pair<>(EquipmentSlot.OFF_HAND,  entityPlayer.getItemBySlot(EquipmentSlot.OFF_HAND)));
-        list.add(new Pair<>(EquipmentSlot.HEAD,     entityPlayer.getItemBySlot(EquipmentSlot.HEAD)));
-        list.add(new Pair<>(EquipmentSlot.CHEST,    entityPlayer.getItemBySlot(EquipmentSlot.CHEST)));
-        list.add(new Pair<>(EquipmentSlot.LEGS,     entityPlayer.getItemBySlot(EquipmentSlot.LEGS)));
-        list.add(new Pair<>(EquipmentSlot.FEET,     entityPlayer.getItemBySlot(EquipmentSlot.FEET)));
+        List<Pair<EnumItemSlot, net.minecraft.world.item.ItemStack>> list = new ArrayList<>();
+        list.add(new Pair<>(EnumItemSlot.MAINHAND, entityPlayer.getItemBySlot(EnumItemSlot.MAINHAND)));
+        list.add(new Pair<>(EnumItemSlot.OFFHAND,  entityPlayer.getItemBySlot(EnumItemSlot.OFFHAND)));
+        list.add(new Pair<>(EnumItemSlot.HEAD,     entityPlayer.getItemBySlot(EnumItemSlot.HEAD)));
+        list.add(new Pair<>(EnumItemSlot.CHEST,    entityPlayer.getItemBySlot(EnumItemSlot.CHEST)));
+        list.add(new Pair<>(EnumItemSlot.LEGS,     entityPlayer.getItemBySlot(EnumItemSlot.LEGS)));
+        list.add(new Pair<>(EnumItemSlot.FEET,     entityPlayer.getItemBySlot(EnumItemSlot.FEET)));
         return list;
     }
 
