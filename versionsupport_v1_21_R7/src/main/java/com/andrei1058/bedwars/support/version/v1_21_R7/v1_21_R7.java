@@ -24,7 +24,6 @@ import net.minecraft.world.entity.EnumItemSlot;
 import net.minecraft.world.entity.EntityLiving;
 import net.minecraft.world.entity.item.EntityTNTPrimed;
 import net.minecraft.world.item.*;
-import net.minecraft.world.level.block.Blocks;
 import org.bukkit.*;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
@@ -40,6 +39,7 @@ import org.bukkit.craftbukkit.v1_21_R7.entity.CraftLivingEntity;
 import org.bukkit.craftbukkit.v1_21_R7.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_21_R7.entity.CraftTNTPrimed;
 import org.bukkit.craftbukkit.v1_21_R7.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_21_R7.util.CraftMagicNumbers;
 import org.bukkit.entity.*;
 import org.bukkit.event.inventory.InventoryEvent;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -292,18 +292,17 @@ public class v1_21_R7 extends VersionSupport {
 
     @Override
     public void voidKill(Player p) {
-        EntityPlayer player = getPlayer(p);
-        player.hurt(player.level().damageSources().outOfWorld(), Float.MAX_VALUE);
+        p.setHealth(0.0);
     }
 
     @Override
     public void hideArmor(@NotNull Player victim, Player receiver) {
         List<Pair<EnumItemSlot, net.minecraft.world.item.ItemStack>> items = new ArrayList<>();
-        net.minecraft.world.item.ItemStack empty = new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.AIR);
-        items.add(new Pair<>(EnumItemSlot.HEAD,  empty));
-        items.add(new Pair<>(EnumItemSlot.CHEST, empty));
-        items.add(new Pair<>(EnumItemSlot.LEGS,  empty));
-        items.add(new Pair<>(EnumItemSlot.FEET,  empty));
+        net.minecraft.world.item.ItemStack empty = CraftItemStack.asNMSCopy(null);
+        items.add(new Pair<>(EnumItemSlot.f, empty));
+        items.add(new Pair<>(EnumItemSlot.e, empty));
+        items.add(new Pair<>(EnumItemSlot.d, empty));
+        items.add(new Pair<>(EnumItemSlot.c, empty));
         PacketPlayOutEntityEquipment packet = new PacketPlayOutEntityEquipment(victim.getEntityId(), items);
         sendPacket(receiver, packet);
     }
@@ -311,10 +310,10 @@ public class v1_21_R7 extends VersionSupport {
     @Override
     public void showArmor(@NotNull Player victim, Player receiver) {
         List<Pair<EnumItemSlot, net.minecraft.world.item.ItemStack>> items = new ArrayList<>();
-        items.add(new Pair<>(EnumItemSlot.HEAD,  CraftItemStack.asNMSCopy(victim.getInventory().getHelmet())));
-        items.add(new Pair<>(EnumItemSlot.CHEST, CraftItemStack.asNMSCopy(victim.getInventory().getChestplate())));
-        items.add(new Pair<>(EnumItemSlot.LEGS,  CraftItemStack.asNMSCopy(victim.getInventory().getLeggings())));
-        items.add(new Pair<>(EnumItemSlot.FEET,  CraftItemStack.asNMSCopy(victim.getInventory().getBoots())));
+        items.add(new Pair<>(EnumItemSlot.f, CraftItemStack.asNMSCopy(victim.getInventory().getHelmet())));
+        items.add(new Pair<>(EnumItemSlot.e, CraftItemStack.asNMSCopy(victim.getInventory().getChestplate())));
+        items.add(new Pair<>(EnumItemSlot.d, CraftItemStack.asNMSCopy(victim.getInventory().getLeggings())));
+        items.add(new Pair<>(EnumItemSlot.c, CraftItemStack.asNMSCopy(victim.getInventory().getBoots())));
         PacketPlayOutEntityEquipment packet = new PacketPlayOutEntityEquipment(victim.getEntityId(), items);
         sendPacket(receiver, packet);
     }
@@ -365,29 +364,29 @@ public class v1_21_R7 extends VersionSupport {
             field.setAccessible(true);
 
             // End stone
-            field.set(Blocks.END_STONE, endStoneBlast);
+            field.set(CraftMagicNumbers.getBlock(Material.END_STONE), endStoneBlast);
 
             // Plain glass
-            field.set(Blocks.GLASS, glassBlast);
+            field.set(CraftMagicNumbers.getBlock(Material.GLASS), glassBlast);
 
             var coloredGlass = new net.minecraft.world.level.block.Block[]{
-                    Blocks.WHITE_STAINED_GLASS,
-                    Blocks.ORANGE_STAINED_GLASS,
-                    Blocks.MAGENTA_STAINED_GLASS,
-                    Blocks.LIGHT_BLUE_STAINED_GLASS,
-                    Blocks.YELLOW_STAINED_GLASS,
-                    Blocks.LIME_STAINED_GLASS,
-                    Blocks.PINK_STAINED_GLASS,
-                    Blocks.GRAY_STAINED_GLASS,
-                    Blocks.LIGHT_GRAY_STAINED_GLASS,
-                    Blocks.CYAN_STAINED_GLASS,
-                    Blocks.PURPLE_STAINED_GLASS,
-                    Blocks.BLUE_STAINED_GLASS,
-                    Blocks.BROWN_STAINED_GLASS,
-                    Blocks.GREEN_STAINED_GLASS,
-                    Blocks.RED_STAINED_GLASS,
-                    Blocks.BLACK_STAINED_GLASS,
-                    Blocks.TINTED_GLASS,
+                    CraftMagicNumbers.getBlock(Material.WHITE_STAINED_GLASS),
+                    CraftMagicNumbers.getBlock(Material.ORANGE_STAINED_GLASS),
+                    CraftMagicNumbers.getBlock(Material.MAGENTA_STAINED_GLASS),
+                    CraftMagicNumbers.getBlock(Material.LIGHT_BLUE_STAINED_GLASS),
+                    CraftMagicNumbers.getBlock(Material.YELLOW_STAINED_GLASS),
+                    CraftMagicNumbers.getBlock(Material.LIME_STAINED_GLASS),
+                    CraftMagicNumbers.getBlock(Material.PINK_STAINED_GLASS),
+                    CraftMagicNumbers.getBlock(Material.GRAY_STAINED_GLASS),
+                    CraftMagicNumbers.getBlock(Material.LIGHT_GRAY_STAINED_GLASS),
+                    CraftMagicNumbers.getBlock(Material.CYAN_STAINED_GLASS),
+                    CraftMagicNumbers.getBlock(Material.PURPLE_STAINED_GLASS),
+                    CraftMagicNumbers.getBlock(Material.BLUE_STAINED_GLASS),
+                    CraftMagicNumbers.getBlock(Material.BROWN_STAINED_GLASS),
+                    CraftMagicNumbers.getBlock(Material.GREEN_STAINED_GLASS),
+                    CraftMagicNumbers.getBlock(Material.RED_STAINED_GLASS),
+                    CraftMagicNumbers.getBlock(Material.BLACK_STAINED_GLASS),
+                    CraftMagicNumbers.getBlock(Material.TINTED_GLASS),
             };
 
             for (net.minecraft.world.level.block.Block glass : coloredGlass) {
@@ -782,18 +781,32 @@ public class v1_21_R7 extends VersionSupport {
     public List<Pair<EnumItemSlot, net.minecraft.world.item.ItemStack>> getPlayerEquipment(
             @NotNull EntityPlayer entityPlayer) {
         List<Pair<EnumItemSlot, net.minecraft.world.item.ItemStack>> list = new ArrayList<>();
-        list.add(new Pair<>(EnumItemSlot.MAINHAND, entityPlayer.getItemBySlot(EnumItemSlot.MAINHAND)));
-        list.add(new Pair<>(EnumItemSlot.OFFHAND,  entityPlayer.getItemBySlot(EnumItemSlot.OFFHAND)));
-        list.add(new Pair<>(EnumItemSlot.HEAD,     entityPlayer.getItemBySlot(EnumItemSlot.HEAD)));
-        list.add(new Pair<>(EnumItemSlot.CHEST,    entityPlayer.getItemBySlot(EnumItemSlot.CHEST)));
-        list.add(new Pair<>(EnumItemSlot.LEGS,     entityPlayer.getItemBySlot(EnumItemSlot.LEGS)));
-        list.add(new Pair<>(EnumItemSlot.FEET,     entityPlayer.getItemBySlot(EnumItemSlot.FEET)));
+        org.bukkit.entity.Player bp = (org.bukkit.entity.Player) entityPlayer.getBukkitEntity();
+        list.add(new Pair<>(EnumItemSlot.a, CraftItemStack.asNMSCopy(bp.getInventory().getItemInMainHand())));
+        list.add(new Pair<>(EnumItemSlot.b, CraftItemStack.asNMSCopy(bp.getInventory().getItemInOffHand())));
+        list.add(new Pair<>(EnumItemSlot.f, CraftItemStack.asNMSCopy(bp.getInventory().getHelmet())));
+        list.add(new Pair<>(EnumItemSlot.e, CraftItemStack.asNMSCopy(bp.getInventory().getChestplate())));
+        list.add(new Pair<>(EnumItemSlot.d, CraftItemStack.asNMSCopy(bp.getInventory().getLeggings())));
+        list.add(new Pair<>(EnumItemSlot.c, CraftItemStack.asNMSCopy(bp.getInventory().getBoots())));
         return list;
     }
 
     /** Creates an add-entity packet for any entity (including players). */
     private static Packet<?> createSpawnEntityPacket(@NotNull net.minecraft.world.entity.Entity entity) {
-        return new PacketPlayOutSpawnEntity(entity);
+        // In Spigot 1.21.x the single-entity constructor was removed from
+        // PacketPlayOutSpawnEntity.  Use reflection to call the entity's own
+        // spawn-packet factory method (getAddEntityPacket or its obfuscated form).
+        for (java.lang.reflect.Method m : entity.getClass().getMethods()) {
+            if (!java.lang.reflect.Modifier.isStatic(m.getModifiers())
+                    && m.getParameterCount() == 0
+                    && Packet.class.isAssignableFrom(m.getReturnType())
+                    && !m.isBridge() && !m.isSynthetic()) {
+                try {
+                    return (Packet<?>) m.invoke(entity);
+                } catch (Exception ignored) {}
+            }
+        }
+        return null;
     }
 
     private void sendPacket(Player player, Packet<?> packet) {
@@ -816,7 +829,9 @@ public class v1_21_R7 extends VersionSupport {
             if (PLAYER_CONNECTION_FIELD != null && SEND_PACKET_METHOD != null) {
                 Object conn = PLAYER_CONNECTION_FIELD.get(handle);
                 for (Packet<?> p : packets) {
-                    SEND_PACKET_METHOD.invoke(conn, p);
+                    if (p != null) {
+                        SEND_PACKET_METHOD.invoke(conn, p);
+                    }
                 }
             }
         } catch (Exception e) {
