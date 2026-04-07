@@ -84,8 +84,12 @@ public class v1_21_R7 extends VersionSupport {
 
     @Override
     public String getTag(org.bukkit.inventory.ItemStack itemStack, String key) {
-        var tag = getTag(itemStack);
-        return tag == null ? null : tag.contains(key) ? tag.getString(key) : null;
+        var nmsItem = CraftItemStack.asNMSCopy(itemStack);
+        if (nmsItem == null) return null;
+        CustomData customData = nmsItem.get(DataComponents.CUSTOM_DATA);
+        if (customData == null) return null;
+        var tag = getCreateTag(nmsItem);
+        return tag.contains(key) ? tag.getString(key) : null;
     }
 
     @Override
@@ -185,22 +189,22 @@ public class v1_21_R7 extends VersionSupport {
     public boolean isArmor(org.bukkit.inventory.ItemStack itemStack) {
         var i = getItem(itemStack);
         if (null == i) return false;
-        // Elytra is not a subclass of ItemArmor, handle separately
-        return i instanceof ItemArmor || itemStack.getType() == org.bukkit.Material.ELYTRA;
+        // Elytra is not a subclass of ArmorItem, handle separately
+        return i instanceof ArmorItem || itemStack.getType() == org.bukkit.Material.ELYTRA;
     }
 
     @Override
     public boolean isTool(org.bukkit.inventory.ItemStack itemStack) {
         var i = getItem(itemStack);
         if (null == i) return false;
-        return i instanceof ItemTool;
+        return i instanceof DiggerItem;
     }
 
     @Override
     public boolean isSword(org.bukkit.inventory.ItemStack itemStack) {
         var i = getItem(itemStack);
         if (null == i) return false;
-        return i instanceof ItemSword;
+        return i instanceof SwordItem;
     }
 
     @Override
@@ -276,11 +280,11 @@ public class v1_21_R7 extends VersionSupport {
 
     @Override
     public double getDamage(org.bukkit.inventory.ItemStack i) {
-        var tag = getTag(i);
-        if (null == tag) {
+        var nmsItem = CraftItemStack.asNMSCopy(i);
+        if (nmsItem == null || nmsItem.get(DataComponents.CUSTOM_DATA) == null) {
             throw new RuntimeException("Provided item has no Tag");
         }
-        return tag.getDouble("generic.attackDamage");
+        return getCreateTag(nmsItem).getDouble("generic.attackDamage");
     }
 
     private static ArmorStand createArmorStand(String name, Location loc) {
@@ -296,16 +300,17 @@ public class v1_21_R7 extends VersionSupport {
     @Override
     public void voidKill(Player p) {
         EntityPlayer player = getPlayer(p);
-        player.hurt(player.damageSources().outOfWorld(), Float.MAX_VALUE);
+        player.hurt(player.level().damageSources().outOfWorld(), Float.MAX_VALUE);
     }
 
     @Override
     public void hideArmor(@NotNull Player victim, Player receiver) {
         List<Pair<EnumItemSlot, net.minecraft.world.item.ItemStack>> items = new ArrayList<>();
-        items.add(new Pair<>(EnumItemSlot.HEAD,  net.minecraft.world.item.ItemStack.EMPTY));
-        items.add(new Pair<>(EnumItemSlot.CHEST, net.minecraft.world.item.ItemStack.EMPTY));
-        items.add(new Pair<>(EnumItemSlot.LEGS,  net.minecraft.world.item.ItemStack.EMPTY));
-        items.add(new Pair<>(EnumItemSlot.FEET,  net.minecraft.world.item.ItemStack.EMPTY));
+        net.minecraft.world.item.ItemStack empty = new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.AIR);
+        items.add(new Pair<>(EnumItemSlot.HEAD,  empty));
+        items.add(new Pair<>(EnumItemSlot.CHEST, empty));
+        items.add(new Pair<>(EnumItemSlot.LEGS,  empty));
+        items.add(new Pair<>(EnumItemSlot.FEET,  empty));
         PacketPlayOutEntityEquipment packet = new PacketPlayOutEntityEquipment(victim.getEntityId(), items);
         sendPacket(receiver, packet);
     }
