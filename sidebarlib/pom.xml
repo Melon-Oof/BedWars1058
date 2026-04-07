@@ -10,6 +10,7 @@
     <version>25.9</version>
     <modules>
         <module>sidebar-base</module>
+        <module>sidebar-v1_21_R7</module>
         <module>sidebar-v1_21_R3</module>
         <module>sidebar-v1_21_R2</module>
         <module>sidebar-v1_21_R1</module>
