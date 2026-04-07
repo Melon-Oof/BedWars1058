@@ -99,16 +99,17 @@ public abstract class DespawnableProvider<T> {
     }
 
     protected PathfinderGoal getTargetGoal(EntityInsentient entity, ITeam team, VersionSupport api) {
+        java.util.function.Predicate<EntityLiving> targetPredicate = entityLiving -> {
+            if (entityLiving instanceof EntityHuman) {
+                return !((EntityHuman) entityLiving).getBukkitEntity().isDead()
+                        && !team.wasMember(((EntityHuman) entityLiving).getBukkitEntity().getUniqueId())
+                        && !team.getArena().isReSpawning(((EntityHuman) entityLiving).getBukkitEntity().getUniqueId())
+                        && !team.getArena().isSpectator(((EntityHuman) entityLiving).getBukkitEntity().getUniqueId());
+            }
+            return notSameTeam(entityLiving, team, api);
+        };
         return new PathfinderGoalNearestAttackableTarget<EntityLiving>(entity, EntityLiving.class, 20, true, false,
-                entityLiving -> {
-                    if (entityLiving instanceof EntityHuman) {
-                        return !((EntityHuman) entityLiving).getBukkitEntity().isDead()
-                                && !team.wasMember(((EntityHuman) entityLiving).getBukkitEntity().getUniqueId())
-                                && !team.getArena().isReSpawning(((EntityHuman) entityLiving).getBukkitEntity().getUniqueId())
-                                && !team.getArena().isSpectator(((EntityHuman) entityLiving).getBukkitEntity().getUniqueId());
-                    }
-                    return notSameTeam(entityLiving, team, api);
-                });
+                targetPredicate);
     }
 
     protected void applyDefaultSettings(org.bukkit.entity.@NotNull LivingEntity bukkitEntity,
