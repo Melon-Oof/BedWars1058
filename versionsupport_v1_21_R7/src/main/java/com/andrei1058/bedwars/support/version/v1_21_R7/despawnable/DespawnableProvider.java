@@ -4,6 +4,7 @@ import com.andrei1058.bedwars.api.arena.team.ITeam;
 import com.andrei1058.bedwars.api.server.VersionSupport;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityInsentient;
+import net.minecraft.server.level.WorldServer;
 import net.minecraft.world.entity.EntityLiving;
 import net.minecraft.world.entity.ai.goal.PathfinderGoal;
 import net.minecraft.world.entity.ai.goal.PathfinderGoalSelector;
@@ -100,7 +101,7 @@ public abstract class DespawnableProvider<T> {
     }
 
     protected PathfinderGoal getTargetGoal(EntityInsentient entity, ITeam team, VersionSupport api) {
-        PathfinderTargetCondition.a targetPredicate = (attacker, entityLiving) -> {
+        PathfinderTargetCondition.a targetPredicate = (level, entityLiving) -> {
             if (entityLiving instanceof EntityHuman) {
                 return !((EntityHuman) entityLiving).getBukkitEntity().isDead()
                         && !team.wasMember(((EntityHuman) entityLiving).getBukkitEntity().getUniqueId())
