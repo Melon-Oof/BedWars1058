@@ -98,7 +98,7 @@ public abstract class DespawnableProvider<T> {
     }
 
     protected PathfinderGoal getTargetGoal(EntityInsentient entity, ITeam team, VersionSupport api) {
-        return new PathfinderGoalNearestAttackableTarget<>(entity, EntityHuman.class, 20, true, false,
+        return new PathfinderGoalNearestAttackableTarget<EntityHuman>(entity, EntityHuman.class, 20, true, false,
                 nmsPlayer -> !nmsPlayer.getBukkitEntity().isDead()
                         && !team.wasMember(nmsPlayer.getBukkitEntity().getUniqueId())
                         && !team.getArena().isReSpawning(nmsPlayer.getBukkitEntity().getUniqueId())
