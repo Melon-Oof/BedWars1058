@@ -8,6 +8,7 @@ import net.minecraft.world.entity.EntityLiving;
 import net.minecraft.world.entity.ai.goal.PathfinderGoal;
 import net.minecraft.world.entity.ai.goal.PathfinderGoalSelector;
 import net.minecraft.world.entity.ai.goal.target.PathfinderGoalNearestAttackableTarget;
+import net.minecraft.world.entity.ai.targeting.PathfinderTargetCondition;
 import net.minecraft.world.entity.player.EntityHuman;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
@@ -99,7 +100,7 @@ public abstract class DespawnableProvider<T> {
     }
 
     protected PathfinderGoal getTargetGoal(EntityInsentient entity, ITeam team, VersionSupport api) {
-        java.util.function.Predicate<EntityLiving> targetPredicate = entityLiving -> {
+        PathfinderTargetCondition.a targetPredicate = entityLiving -> {
             if (entityLiving instanceof EntityHuman) {
                 return !((EntityHuman) entityLiving).getBukkitEntity().isDead()
                         && !team.wasMember(((EntityHuman) entityLiving).getBukkitEntity().getUniqueId())
