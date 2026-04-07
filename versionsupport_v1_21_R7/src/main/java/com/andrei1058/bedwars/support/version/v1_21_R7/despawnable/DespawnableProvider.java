@@ -4,6 +4,7 @@ import com.andrei1058.bedwars.api.arena.team.ITeam;
 import com.andrei1058.bedwars.api.server.VersionSupport;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityInsentient;
+import net.minecraft.world.entity.EntityLiving;
 import net.minecraft.world.entity.ai.goal.PathfinderGoal;
 import net.minecraft.world.entity.ai.goal.PathfinderGoalSelector;
 import net.minecraft.world.entity.ai.goal.target.PathfinderGoalNearestAttackableTarget;
@@ -98,11 +99,16 @@ public abstract class DespawnableProvider<T> {
     }
 
     protected PathfinderGoal getTargetGoal(EntityInsentient entity, ITeam team, VersionSupport api) {
-        return new PathfinderGoalNearestAttackableTarget<EntityHuman>(entity, EntityHuman.class, 20, true, false,
-                nmsPlayer -> !nmsPlayer.getBukkitEntity().isDead()
-                        && !team.wasMember(nmsPlayer.getBukkitEntity().getUniqueId())
-                        && !team.getArena().isReSpawning(nmsPlayer.getBukkitEntity().getUniqueId())
-                        && !team.getArena().isSpectator(nmsPlayer.getBukkitEntity().getUniqueId()));
+        return new PathfinderGoalNearestAttackableTarget<>(entity, EntityLiving.class, 20, true, false,
+                entityLiving -> {
+                    if (entityLiving instanceof EntityHuman) {
+                        return !((EntityHuman) entityLiving).getBukkitEntity().isDead()
+                                && !team.wasMember(((EntityHuman) entityLiving).getBukkitEntity().getUniqueId())
+                                && !team.getArena().isReSpawning(((EntityHuman) entityLiving).getBukkitEntity().getUniqueId())
+                                && !team.getArena().isSpectator(((EntityHuman) entityLiving).getBukkitEntity().getUniqueId());
+                    }
+                    return notSameTeam(entityLiving, team, api);
+                });
     }
 
     protected void applyDefaultSettings(org.bukkit.entity.@NotNull LivingEntity bukkitEntity,
