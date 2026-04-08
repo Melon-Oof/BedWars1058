@@ -48,7 +48,13 @@ public class SidebarManager {
         }
 
         // load server version support
-        String serverVersion = Bukkit.getServer().getClass().getName().split("\\.")[3];
+        // On Spigot / older Paper: org.bukkit.craftbukkit.v1_21_R7.CraftServer → parts[3] = "v1_21_R7"
+        // On Paper 1.20.5+: org.bukkit.craftbukkit.CraftServer → parts[3] = "CraftServer", so fall back
+        // to deriving the NMS revision from the Bukkit API version string.
+        String[] parts = Bukkit.getServer().getClass().getName().split("\\.");
+        String serverVersion = (parts.length > 3 && parts[3].startsWith("v"))
+                ? parts[3]
+                : mapBukkitVersionToNms(Bukkit.getBukkitVersion());
 
         String className = "com.andrei1058.spigot.sidebar." + serverVersion + ".ProviderImpl";
         try {
@@ -165,5 +171,47 @@ public class SidebarManager {
 
     public static void setInstance(SidebarManager instance) {
         SidebarManager.instance = instance;
+    }
+
+    /**
+     * Maps a Bukkit version string such as {@code "1.21.11-R0.1-SNAPSHOT"} to
+     * the corresponding NMS package revision string, e.g. {@code "v1_21_R7"}.
+     * Used on Paper 1.20.5+ where CraftBukkit packages no longer carry a version segment.
+     */
+    static String mapBukkitVersionToNms(String bukkitVersion) {
+        String mcVersion = bukkitVersion.split("-")[0];
+        String[] mc = mcVersion.split("\\.");
+        int minor = mc.length > 1 ? Integer.parseInt(mc[1]) : 0;
+        int patch  = mc.length > 2 ? Integer.parseInt(mc[2]) : 0;
+
+        if (minor == 21) {
+            if (patch >= 11) return "v1_21_R7";
+            if (patch >= 9)  return "v1_21_R6";
+            if (patch >= 7)  return "v1_21_R5";
+            if (patch >= 5)  return "v1_21_R4";
+            if (patch >= 3)  return "v1_21_R3";
+            if (patch >= 2)  return "v1_21_R2";
+            return "v1_21_R1";
+        } else if (minor == 20) {
+            if (patch >= 5) return "v1_20_R4";
+            if (patch >= 3) return "v1_20_R3";
+            if (patch == 2) return "v1_20_R2";
+            return "v1_20_R1";
+        } else if (minor == 19) {
+            if (patch >= 3) return "v1_19_R3";
+            if (patch >= 1) return "v1_19_R2";
+            return "v1_19_R1";
+        } else if (minor == 18) {
+            return "v1_18_R2";
+        } else if (minor == 17) {
+            return "v1_17_R1";
+        } else if (minor == 16) {
+            return "v1_16_R3";
+        } else if (minor == 12) {
+            return "v1_12_R1";
+        } else if (minor == 8) {
+            return "v1_8_R3";
+        }
+        return "v1_" + minor + "_R1";
     }
 }
