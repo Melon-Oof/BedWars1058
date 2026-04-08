@@ -101,7 +101,7 @@ public abstract class DespawnableProvider<T> {
     }
 
     protected PathfinderGoal getTargetGoal(EntityInsentient entity, ITeam team, VersionSupport api) {
-        PathfinderTargetCondition.a targetPredicate = (level, entityLiving) -> {
+        PathfinderTargetCondition.a targetPredicate = (entityLiving, level) -> {
             if (entityLiving instanceof EntityHuman) {
                 return !((EntityHuman) entityLiving).getBukkitEntity().isDead()
                         && !team.wasMember(((EntityHuman) entityLiving).getBukkitEntity().getUniqueId())
