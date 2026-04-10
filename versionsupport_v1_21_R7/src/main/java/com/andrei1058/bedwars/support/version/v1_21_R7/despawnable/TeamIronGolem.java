@@ -4,15 +4,15 @@ import com.andrei1058.bedwars.api.arena.team.ITeam;
 import com.andrei1058.bedwars.api.language.Language;
 import com.andrei1058.bedwars.api.language.Messages;
 import com.andrei1058.bedwars.api.server.VersionSupport;
-import net.minecraft.world.entity.ai.goal.FloatGoal;
-import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
-import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
-import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
-import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
-import net.minecraft.world.entity.animal.IronGolem;
+import net.minecraft.world.entity.ai.goal.PathfinderGoalFloat;
+import net.minecraft.world.entity.ai.goal.PathfinderGoalMeleeAttack;
+import net.minecraft.world.entity.ai.goal.PathfinderGoalRandomLookaround;
+import net.minecraft.world.entity.ai.goal.PathfinderGoalRandomStroll;
+import net.minecraft.world.entity.EntityCreature;
+import net.minecraft.world.entity.ai.goal.target.PathfinderGoalHurtByTarget;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_21_R7.entity.CraftEntity;
 import org.bukkit.entity.EntityType;
 import org.jetbrains.annotations.NotNull;
 
@@ -43,18 +43,18 @@ public class TeamIronGolem extends DespawnableProvider<org.bukkit.entity.IronGol
                 .spawnEntity(location, EntityType.IRON_GOLEM);
         applyDefaultSettings(bukkitEntity, attr, team);
 
-        var entity = (IronGolem) ((CraftEntity) bukkitEntity).getHandle();
+        var entity = (EntityCreature) ((CraftEntity) bukkitEntity).getHandle();
 
         clearSelectors(entity);
         var goalSelector = getGoalSelector(entity);
         var targetSelector = getTargetSelector(entity);
 
-        goalSelector.addGoal(1, new FloatGoal(entity));
-        goalSelector.addGoal(2, new MeleeAttackGoal(entity, 1.5D, false));
-        goalSelector.addGoal(3, new RandomStrollGoal(entity, 1D));
-        goalSelector.addGoal(4, new RandomLookAroundGoal(entity));
-        targetSelector.addGoal(1, new HurtByTargetGoal(entity));
-        targetSelector.addGoal(2, getTargetGoal(entity, team, api));
+        goalSelector.a(1, new PathfinderGoalFloat(entity));
+        goalSelector.a(2, new PathfinderGoalMeleeAttack(entity, 1.5D, false));
+        goalSelector.a(3, new PathfinderGoalRandomStroll(entity, 1D));
+        goalSelector.a(4, new PathfinderGoalRandomLookaround(entity));
+        targetSelector.a(1, new PathfinderGoalHurtByTarget(entity));
+        targetSelector.a(2, getTargetGoal(entity, team, api));
 
         return bukkitEntity;
     }

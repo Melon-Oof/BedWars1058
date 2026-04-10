@@ -32,24 +32,12 @@
             <type>jar</type>
             <scope>provided</scope>
         </dependency>
-        <!--
-            Paper 1.21.11 Mojang-mapped server jar.
-            Paper 1.20.5+ removed the NMS version suffix from CraftBukkit packages
-            and ships Mojang-mapped class names directly, so we compile against
-            the Paper server artifact rather than org.spigotmc:spigot.
-        -->
         <dependency>
-            <groupId>io.papermc.paper</groupId>
-            <artifactId>paper</artifactId>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot</artifactId>
             <version>1.21.11-R0.1-SNAPSHOT</version>
             <type>jar</type>
             <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>commons-codec</groupId>
-                    <artifactId>commons-codec</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
     </dependencies>
 

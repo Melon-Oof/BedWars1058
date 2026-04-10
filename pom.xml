@@ -109,6 +109,7 @@
         </plugins>
     </build>
     <modules>
+        <module>sidebarlib</module>
         <module>bedwars-plugin</module>
         <module>bedwars-api</module>
         <module>resetadapter_aswm</module>

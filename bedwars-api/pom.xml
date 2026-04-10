@@ -44,7 +44,7 @@
         </dependency>
         <!-- SIDEBAR LIB -->
         <dependency>
-            <groupId>com.github.andrei1058.SidebarLib</groupId>
+            <groupId>com.andrei1058.spigot.sidebar</groupId>
             <artifactId>sidebar-base</artifactId>
             <version>25.9</version>
         </dependency>
