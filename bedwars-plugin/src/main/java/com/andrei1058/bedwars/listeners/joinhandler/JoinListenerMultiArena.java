@@ -23,6 +23,7 @@ package com.andrei1058.bedwars.listeners.joinhandler;
 import com.andrei1058.bedwars.BedWars;
 import com.andrei1058.bedwars.arena.Arena;
 import com.andrei1058.bedwars.arena.ReJoin;
+import com.andrei1058.bedwars.levels.internal.PlayerLevel;
 import com.andrei1058.bedwars.sidebar.SidebarService;
 import com.andrei1058.bedwars.support.paper.TeleportManager;
 import org.bukkit.Bukkit;
@@ -91,9 +92,13 @@ public class JoinListenerMultiArena implements Listener {
         SidebarService.getInstance().giveSidebar(p, null, true);
 
         p.setHealthScale(p.getMaxHealth());
-        p.setExp(0);
         p.setHealthScale(20);
         p.setFoodLevel(20);
+        // Schedule XP bar update to run after PlayerLevel is loaded from the DB
+        Bukkit.getScheduler().runTaskLater(BedWars.plugin, () -> {
+            PlayerLevel pl = PlayerLevel.getOrNull(p.getUniqueId());
+            if (pl != null) pl.updateXpBar(p);
+        }, 1L);
     }
 }
 

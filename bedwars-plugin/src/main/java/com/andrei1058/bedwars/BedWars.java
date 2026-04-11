@@ -320,6 +320,10 @@ public class BedWars extends JavaPlugin {
 
         registerEvents(new InvisibilityPotionListener());
 
+        if (config.getBoolean(ConfigPath.GENERAL_CONFIGURATION_ENABLE_QUICK_DEPOSIT)) {
+            registerEvents(new QuickDepositListener());
+        }
+
         /* Load join signs. */
         loadArenasAndSigns();
 

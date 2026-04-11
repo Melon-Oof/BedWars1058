@@ -45,6 +45,8 @@ public class PlayerLevel {
 
     // keep trace if current level is different than the one in database
     private boolean modified = false;
+    // keep trace if data has been loaded from database
+    private boolean dataLoaded = false;
 
     private static ConcurrentHashMap<UUID, PlayerLevel> levelByPlayer = new ConcurrentHashMap<>();
 
@@ -90,6 +92,14 @@ public class PlayerLevel {
         updateProgressBar();
 
         modified = false;
+        dataLoaded = true;
+    }
+
+    /**
+     * Returns true if level data has been loaded from the database.
+     */
+    public boolean isDataLoaded() {
+        return dataLoaded;
     }
 
     /**
@@ -108,6 +118,36 @@ public class PlayerLevel {
                         + LevelsConfig.levels.getString("progress-bar.locked-color") + String.valueOf(new char[locked]).replace("\0", LevelsConfig.levels.getString("progress-bar.symbol"))));
         requiredXp = formatNumber(nextLevelCost);
         formattedCurrentXp = formatNumber(currentXp);
+        updateXpBar(Bukkit.getPlayer(uuid));
+    }
+
+    /**
+     * Updates the vanilla XP bar to reflect the player's BedWars level and progress.
+     * Safe to call from async threads; Bukkit API calls are dispatched to the main thread.
+     */
+    public void updateXpBar(org.bukkit.entity.Player p) {
+        if (p == null || !p.isOnline()) return;
+
+        final int lvl = this.level;
+        float rawProgress = (float) this.currentXp / Math.max(1, this.nextLevelCost);
+        if (rawProgress < 0f) rawProgress = 0f;
+        if (rawProgress > 1f) rawProgress = 1f;
+        final float progress = rawProgress;
+
+        if (!Bukkit.isPrimaryThread()) {
+            Bukkit.getScheduler().runTask(BedWars.plugin, () -> applyXpBar(p, lvl, progress));
+        } else {
+            applyXpBar(p, lvl, progress);
+        }
+    }
+
+    private void applyXpBar(org.bukkit.entity.Player p, int lvl, float progress) {
+        if (!p.isOnline()) return;
+        com.andrei1058.bedwars.api.arena.IArena arena = com.andrei1058.bedwars.arena.Arena.getArenaByPlayer(p);
+        // Skip during pre-game countdown where the XP bar is used as a timer
+        if (arena != null && arena.getStatus() == com.andrei1058.bedwars.api.arena.GameState.starting) return;
+        p.setLevel(lvl);
+        p.setExp(progress);
     }
 
     /**
@@ -125,10 +165,21 @@ public class PlayerLevel {
     }
 
     /**
-     * Get PlayerLevel by player.
+     * Get PlayerLevel by player. Returns null if not yet loaded from database.
+     *
+     * @deprecated Use {@link #getOrNull(UUID)} for clarity.
      */
+    @Deprecated
     public static PlayerLevel getLevelByPlayer(UUID player) {
-        return levelByPlayer.getOrDefault(player, new PlayerLevel(player, 1, 0));
+        return levelByPlayer.get(player);
+    }
+
+    /**
+     * Get PlayerLevel by player without creating a default entry.
+     * Returns null if the player data has not been loaded yet.
+     */
+    public static PlayerLevel getOrNull(UUID player) {
+        return levelByPlayer.get(player);
     }
 
     /**

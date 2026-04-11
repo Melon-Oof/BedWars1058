@@ -286,10 +286,13 @@ public class v1_20_R3 extends VersionSupport {
     @Override
     public void hideArmor(@NotNull Player victim, Player receiver) {
         List<Pair<EnumItemSlot, ItemStack>> items = new ArrayList<>();
-        items.add(new Pair<>(EnumItemSlot.f, new ItemStack(Item.b(0))));
-        items.add(new Pair<>(EnumItemSlot.e, new ItemStack(Item.b(0))));
-        items.add(new Pair<>(EnumItemSlot.d, new ItemStack(Item.b(0))));
-        items.add(new Pair<>(EnumItemSlot.c, new ItemStack(Item.b(0))));
+        // Use CraftItemStack.asNMSCopy(null) which returns ItemStack.EMPTY - the only safe way
+        // to tell the client a slot is truly empty without causing equipment glitches.
+        ItemStack emptyStack = CraftItemStack.asNMSCopy(null);
+        items.add(new Pair<>(EnumItemSlot.f, emptyStack));
+        items.add(new Pair<>(EnumItemSlot.e, emptyStack));
+        items.add(new Pair<>(EnumItemSlot.d, emptyStack));
+        items.add(new Pair<>(EnumItemSlot.c, emptyStack));
         PacketPlayOutEntityEquipment packet1 = new PacketPlayOutEntityEquipment(victim.getEntityId(), items);
         sendPacket(receiver, packet1);
     }

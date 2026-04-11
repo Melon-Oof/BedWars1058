@@ -65,6 +65,13 @@ public class BwSidebar implements ISidebar {
         this.registerPersistentPlaceholder(new PlaceholderProvider("{server}", () -> serverId));
         String serverIp = BedWars.config.getString(ConfigPath.GENERAL_CONFIG_PLACEHOLDERS_REPLACEMENTS_SERVER_IP);
         this.registerPersistentPlaceholder(new PlaceholderProvider("{serverIp}", () -> serverIp));
+        this.registerPersistentPlaceholder(new PlaceholderProvider("{on}", () ->
+                String.valueOf(Bukkit.getOnlinePlayers().size())));
+        String lobbyWorldName = config.getLobbyWorldName();
+        this.registerPersistentPlaceholder(new PlaceholderProvider("{lobbyOn}", () -> {
+            org.bukkit.World lobbyWorld = Bukkit.getWorld(lobbyWorldName);
+            return null == lobbyWorld ? "0" : String.valueOf(lobbyWorld.getPlayers().size());
+        }));
     }
 
     public void remove() {

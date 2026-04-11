@@ -44,7 +44,9 @@ import org.bukkit.util.Vector;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.stream.Collectors;
 
 import static com.andrei1058.bedwars.BedWars.*;
 
@@ -173,14 +175,16 @@ public class OreGenerator implements IGenerator {
                 return;
             }
             if (plugin.getConfig().getBoolean(ConfigPath.GENERAL_CONFIGURATION_ENABLE_GEN_SPLIT)) {
-                Object[] players = location.getWorld().getNearbyEntities(location, 1, 1, 1).stream().filter(entity -> entity.getType() == EntityType.PLAYER)
-                        .filter(entity -> arena.isPlayer((Player) entity)).toArray();
-                if (players.length <= 1) {
+                double radius = plugin.getConfig().getDouble(ConfigPath.GENERAL_CONFIGURATION_GEN_SPLIT_RADIUS, 1.5);
+                List<Player> nearbyMembers = bwt.getMembers().stream()
+                        .filter(p -> p.getLocation().distanceSquared(location) <= radius * radius)
+                        .collect(Collectors.toList());
+
+                if (nearbyMembers.isEmpty()) {
                     dropItem(location);
                     return;
                 }
-                for (Object o : players) {
-                    Player player = (Player) o;
+                for (Player player : nearbyMembers) {
                     ItemStack item = ore.clone();
                     item.setAmount(amount);
                     player.playSound(player.getLocation(), Sound.valueOf(BedWars.getForCurrentVersion("ITEM_PICKUP", "ENTITY_ITEM_PICKUP", "ENTITY_ITEM_PICKUP")), 0.6f, 1.3f);
