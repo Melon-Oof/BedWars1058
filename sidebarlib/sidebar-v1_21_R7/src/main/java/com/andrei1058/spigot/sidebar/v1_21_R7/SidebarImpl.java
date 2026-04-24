@@ -114,13 +114,24 @@ public class SidebarImpl extends WrappedSidebar {
                 if (nmsDisplayNameField == null) {
                     synchronized (SidebarObjectiveImpl.class) {
                         if (nmsDisplayNameField == null) {
-                            for (Field f : ScoreboardObjective.class.getDeclaredFields()) {
-                                if (IChatBaseComponent.class.isAssignableFrom(f.getType())) {
-                                    f.setAccessible(true);
-                                    nmsDisplayNameField = f;
-                                    break;
+                            // Try Mojang-mapped name first (Paper 1.21.11+ uses Mojang mappings)
+                            Field candidate = null;
+                            try {
+                                candidate = ScoreboardObjective.class.getDeclaredField("displayName");
+                                candidate.setAccessible(true);
+                            } catch (NoSuchFieldException ignored) {
+                            }
+                            // Fall back: find the first IChatBaseComponent field by type
+                            if (candidate == null) {
+                                for (Field f : ScoreboardObjective.class.getDeclaredFields()) {
+                                    if (IChatBaseComponent.class.isAssignableFrom(f.getType())) {
+                                        f.setAccessible(true);
+                                        candidate = f;
+                                        break;
+                                    }
                                 }
                             }
+                            nmsDisplayNameField = candidate;
                         }
                     }
                 }
