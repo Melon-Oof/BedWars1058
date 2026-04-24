@@ -17,6 +17,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
@@ -38,6 +39,8 @@ public class SidebarImpl extends WrappedSidebar {
     }
 
     protected class SidebarObjectiveImpl extends ScoreboardObjective implements SidebarObjective {
+
+        private static volatile Field nmsDisplayNameField;
 
         private final String objectiveName;
         private SidebarLine displayName;
@@ -97,8 +100,35 @@ public class SidebarImpl extends WrappedSidebar {
                 return false;
             }
             this.displayNameComp = IChatBaseComponent.b(newTitle);
-            super.a(this.displayNameComp);
+            setNmsDisplayName(this.displayNameComp);
             return true;
+        }
+
+        /**
+         * Directly sets the parent NMS displayName field via reflection to avoid NPE.
+         * In Paper 1.21.11+, ScoreboardObjective.a(IChatBaseComponent) calls
+         * scoreboard.onObjectiveChanged() which NPEs when scoreboard is null.
+         */
+        private void setNmsDisplayName(IChatBaseComponent component) {
+            try {
+                if (nmsDisplayNameField == null) {
+                    synchronized (SidebarObjectiveImpl.class) {
+                        if (nmsDisplayNameField == null) {
+                            for (Field f : ScoreboardObjective.class.getDeclaredFields()) {
+                                if (IChatBaseComponent.class.isAssignableFrom(f.getType())) {
+                                    f.setAccessible(true);
+                                    nmsDisplayNameField = f;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                if (nmsDisplayNameField != null) {
+                    nmsDisplayNameField.set(this, component);
+                }
+            } catch (Exception ignored) {
+            }
         }
 
         @Override
